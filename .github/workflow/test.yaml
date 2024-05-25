@@ -1,0 +1,12 @@
+name : Testing GitHUB Actions.
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  testing:
+    runs-on: ubuntu-latest
+    steps:
+      -run: |
+        echo "This work today!"
