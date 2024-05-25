@@ -1,12 +1,14 @@
-name : Testing GitHUB Actions.
+name: Testing GITHUB ACTIONS.
 
 on:
   push:
-    branches: ["main"]
+    branches:
+      - "main"
+      - "develop"
 
 jobs:
-  testing:
+  Testing:
     runs-on: ubuntu-latest
     steps:
-      -run: |
-        echo "This work today!"
+      - run: |
+          echo : "This works just fine!"
