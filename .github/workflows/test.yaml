@@ -2,8 +2,7 @@ name: Testing GITHUB ACTIONS.
 
 on:
   push:
-    branches:
-      - "main"
+    branches: ["main"]
 
 jobs:
   Testing:
