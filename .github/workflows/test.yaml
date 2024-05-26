@@ -1,12 +1,69 @@
-name: Testing GITHUB ACTIONS.
+#name: Testing GITHUB ACTIONS.
+
+# on:
+#  push:
+#    branches: ["main"]
+
+# jobs:
+# Testing:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - run: |
+#          echo : "This works just fine!"
+name: Run Maven Deploy
 
 on:
-  push:
-    branches: ["main"]
+  workflow_call:
+    inputs:
+      environment:
+        description: 'Environment to run against'
+        type: string
+      application-name:
+        description: 'Application Name'
+        required: true 
+        type: string 
+      worker-type:
+        description: 'Worker Type'
+        default: 'MICRO'        
+        required: false 
+        type: string          
+      workers:
+        description: 'Number of Workers'
+        default: '1'        
+        required: false 
+        type: string    
+      region:
+        description: 'Region'
+        default: ''
+        required: false 
+        type: string  
+
 
 jobs:
-  Testing:
-    runs-on: ubuntu-latest
-    steps:
-      - run: |
-          echo : "This works just fine!"
+
+  Sandbox_Build:
+    if: inputs.environment == 'SANDBOX' 
+    # needs: Mule_Test       
+    uses: DEMO-NTN/workFlows/.github/workflows/maven_build.yml@main
+    secrets:
+      connected-app-id: ${{ secrets.CONAPP_SBX_CLIENT_ID }}
+      connected-app-secret: ${{ secrets.CONAPP_SBX_CLIENT_SECRET }}
+
+  Sandbox_Deploy:
+    needs: Sandbox_Build    
+    if: inputs.environment == 'SANDBOX'    
+    uses: DEMO-NTN/workflows/.github/workflows/maven_deploy.yml@main
+    with:
+      application-name: ${{ inputs.application-name }}
+      application-prefix: sb-
+      platform-enviroment: SANDBOX
+      anypoint-enviroment: SANDBOX
+      worker-type: ${{ inputs.worker-type }}
+      workers: ${{ inputs.workers }}
+      region: ${{ inputs.region }}
+    secrets:
+      connected-app-id: ${{ secrets.CONAPP_SBX_CLIENT_ID }}
+      connected-app-secret: ${{ secrets.CONAPP_SBX_CLIENT_SECRET }}
+      platform-id: ${{ secrets.PLATFORM_SBX_CLIENT_ID }}
+      platform-secret: ${{ secrets.PLATFORM_SBX_CLIENT_SECRET }}
+      secure-key: ${{ secrets.SECURE_KEY }}
